@@ -3606,7 +3606,7 @@
     
                 if ( entry.isFile ) {
                     entry.file(function( file ) {
-                        file.type && results.push( file );
+                        results.push( file );
                         deferred.resolve( true );
                     });
                 } else if ( entry.isDirectory ) {
