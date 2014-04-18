@@ -952,8 +952,8 @@
                     position: 'absolute',
                     top: '0px',
                     left: '0px',
-                    width: '1px',
-                    height: '1px',
+                    width: '100%',
+                    height: '100%',
                     overflow: 'hidden'
                 });
     
@@ -2505,6 +2505,14 @@
              * @param {File} files 数组，内容为原始File(lib/File）对象。
              * @description 当一批文件添加进队列以后触发。
              * @for  Uploader
+             */
+            
+            /**
+             * @property {Boolean} [auto=false]
+             * @namespace options
+             * @for Uploader
+             * @description 设置为 true 后，不需要手动调用上传，有文件选择即开始上传。
+             * 
              */
     
             /**
@@ -4391,6 +4399,7 @@
             }
         });
     });
+    
     /**
      * @fileOverview Transport
      * @todo 支持chunked传输，优势：
@@ -4900,7 +4909,7 @@
                                 return {};
                             }
                         };
-                        me._responseJson  = p(me._response);
+                        me._responseJson  = me._response ? p(me._response) : {};
                             
                         // }
                     }

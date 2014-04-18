@@ -952,8 +952,8 @@
                     position: 'absolute',
                     top: '0px',
                     left: '0px',
-                    width: '1px',
-                    height: '1px',
+                    width: '100%',
+                    height: '100%',
                     overflow: 'hidden'
                 });
     
@@ -2911,6 +2911,14 @@
              * @description 当一批文件添加进队列以后触发。
              * @for  Uploader
              */
+            
+            /**
+             * @property {Boolean} [auto=false]
+             * @namespace options
+             * @for Uploader
+             * @description 设置为 true 后，不需要手动调用上传，有文件选择即开始上传。
+             * 
+             */
     
             /**
              * @method addFiles
@@ -4796,6 +4804,7 @@
             }
         });
     });
+    
     /**
      * Terms:
      *
@@ -4902,6 +4911,7 @@
             }
         };
     });
+    
     /**
      * Terms:
      *
