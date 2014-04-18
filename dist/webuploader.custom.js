@@ -123,7 +123,6 @@
     }
 })( this, function( window, define, require ) {
 
-
     /**
      * @fileOverview jQuery or Zepto
      */
@@ -3745,7 +3744,7 @@
     
                 mimetype = parts[ 0 ].split(':')[ 1 ].split(';')[ 0 ];
     
-                return this.arrayBufferToBlob( ab, mimetype);
+                return this.arrayBufferToBlob( ab, mimetype );
             },
     
             dataURL2ArrayBuffer: function( dataURI ) {
@@ -3799,6 +3798,7 @@
             }
         };
     });
+    
     /**
      * Terms:
      *
@@ -5606,5 +5606,6 @@
     ], function( Base ) {
         return Base;
     });
+
     return require('webuploader');
 });

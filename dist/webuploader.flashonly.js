@@ -123,7 +123,6 @@
     }
 })( this, function( window, define, require ) {
 
-
     /**
      * @fileOverview jQuery or Zepto
      */
@@ -4127,5 +4126,6 @@
     ], function( preset ) {
         return preset;
     });
+
     return require('webuploader');
 });
