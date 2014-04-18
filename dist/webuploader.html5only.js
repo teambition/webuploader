@@ -1,4 +1,4 @@
-/*! WebUploader 0.1.6 */
+/*! WebUploader 0.1.24 */
 
 
 /**
@@ -126,7 +126,7 @@
             root.WebUploader = origin;
         };
     }
-})( window, function( window, define, require ) {
+})( window, function( window, define, _require ) {
 
 
     /**
@@ -244,7 +244,7 @@
             /**
              * @property {String} version 当前版本号。
              */
-            version: '0.1.6',
+            version: '0.1.24',
     
             /**
              * @property {jQuery|Zepto} $ 引用依赖的jQuery或者Zepto对象。
@@ -960,8 +960,8 @@
                     position: 'absolute',
                     top: '0px',
                     left: '0px',
-                    width: '1px',
-                    height: '1px',
+                    width: '100%',
+                    height: '100%',
                     overflow: 'hidden'
                 });
     
@@ -1664,6 +1664,8 @@
         function File( ruid, file ) {
             var ext;
     
+            this.directoryId = file.directoryId
+            this.filePath = file.filePath
             this.name = file.name || ('untitled' + uid++);
             ext = rExt.exec( file.name ) ? RegExp.$1.toLowerCase() : '';
     
@@ -2406,6 +2408,20 @@
              * @type {string}
              */
             this.name = source.name || 'Untitled';
+    
+            /**
+             * 单次文件夹上传时候的唯一标志
+             * @property directoryId
+             * @type {string}
+             */
+            this.directoryId = source.directoryId;
+    
+            /**
+             * 如果存在 directoryId 时，对应的文件的相对地址
+             * @property filePath
+             * @type {string}
+             */
+            this.filePath = source.filePath;
     
             /**
              * 文件体积（字节）
@@ -3539,6 +3555,7 @@
                 }
     
                 if ( me.runing ) {
+                    me.owner.trigger('startUpload', file);// 开始上传或暂停恢复的，trigger event
                     return Base.nextTick( me.__tick );
                 }
     
@@ -3587,8 +3604,7 @@
              * @for  Uploader
              */
             stopUpload: function( file, interrupt ) {
-                var me = this,
-                    block;
+                var me = this;
     
                 if (file === true) {
                     interrupt = file;
@@ -3613,19 +3629,18 @@
     
                     $.each( me.pool, function( _, v ) {
     
-                        // 只 abort 指定的文件。
+                        // 只 abort 指定的文件，每一个分片。
                         if (v.file === file) {
-                            block = v;
-                            return false;
+                            v.transport && v.transport.abort();
+    
+                            if (interrupt) {
+                                me._putback(v);
+                                me._popBlock(v);
+                            }
                         }
                     });
     
-                    block.transport && block.transport.abort();
-    
-                    if (interrupt) {
-                        me._putback(block);
-                        me._popBlock(block);
-                    }
+                    me.owner.trigger('stopUpload', file);// 暂停，trigger event
     
                     return Base.nextTick( me.__tick );
                 }
@@ -4605,7 +4620,7 @@
                 me.dndOver = false;
                 me.elem.removeClass( prefix + 'over' );
     
-                if ( data ) {
+                if ( !dataTransfer || data ) {
                     return;
                 }
     
@@ -4636,7 +4651,7 @@
                     if ( canAccessFolder && item.webkitGetAsEntry().isDirectory ) {
     
                         promises.push( this._traverseDirectoryTree(
-                                item.webkitGetAsEntry(), results ) );
+                                item.webkitGetAsEntry(), results, null, Base.guid() ) );
                     } else {
                         results.push( file );
                     }
@@ -4652,12 +4667,16 @@
                 });
             },
     
-            _traverseDirectoryTree: function( entry, results ) {
+            _traverseDirectoryTree: function( entry, results, directory, uid ) {
                 var deferred = Base.Deferred(),
                     me = this;
     
                 if ( entry.isFile ) {
                     entry.file(function( file ) {
+                        if (directory) {
+                          file.directoryId = uid
+                          file.filePath = directory.fullPath.substr(1) + '/' + file.name
+                        }
                         results.push( file );
                         deferred.resolve();
                     });
@@ -4670,7 +4689,7 @@
     
                         for ( i = 0; i < len; i++ ) {
                             promises.push( me._traverseDirectoryTree(
-                                    entries[ i ], arr ) );
+                                    entries[ i ], arr, entry, uid) );
                         }
     
                         Base.when.apply( Base, promises ).then(function() {
@@ -4973,6 +4992,7 @@
             }
         };
     });
+    
     /**
      * Terms:
      *
@@ -5992,11 +6012,11 @@
                         return me.trigger('load');
                     } else if ( xhr.status >= 500 && xhr.status < 600 ) {
                         me._response = xhr.responseText;
-                        return me.trigger( 'error', 'server' );
+                        return me.trigger( 'error', 'server-'+status );
                     }
     
     
-                    return me.trigger( 'error', me._status ? 'http' : 'abort' );
+                    return me.trigger( 'error', me._status ? 'http-'+status : 'abort' );
                 };
     
                 me._xhr = xhr;
@@ -6022,6 +6042,7 @@
             }
         });
     });
+    
     /**
      * @fileOverview 只有html5实现的文件版本。
      */
@@ -6055,5 +6076,5 @@
     ], function( preset ) {
         return preset;
     });
-    return require('webuploader');
+    return _require('webuploader');
 });

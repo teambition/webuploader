@@ -123,5 +123,5 @@
             root.WebUploader = origin;
         };
     }
-})( window, function( window, define, require ) {
+})( window, function( window, define, _require ) {
 

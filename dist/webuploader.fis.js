@@ -1,4 +1,4 @@
-/*! WebUploader 0.1.6 */
+/*! WebUploader 0.1.23 */
 
 
 var jQuery = require('example:widget/ui/jquery/jquery.js');
@@ -219,7 +219,7 @@ module.exports = (function( root, factory ) {
             /**
              * @property {String} version 当前版本号。
              */
-            version: '0.1.6',
+            version: '0.1.23',
     
             /**
              * @property {jQuery|Zepto} $ 引用依赖的jQuery或者Zepto对象。
@@ -935,8 +935,8 @@ module.exports = (function( root, factory ) {
                     position: 'absolute',
                     top: '0px',
                     left: '0px',
-                    width: '1px',
-                    height: '1px',
+                    width: '100%',
+                    height: '100%',
                     overflow: 'hidden'
                 });
     
@@ -1639,6 +1639,8 @@ module.exports = (function( root, factory ) {
         function File( ruid, file ) {
             var ext;
     
+            this.directoryId = file.directoryId
+            this.filePath = file.filePath
             this.name = file.name || ('untitled' + uid++);
             ext = rExt.exec( file.name ) ? RegExp.$1.toLowerCase() : '';
     
@@ -2381,6 +2383,20 @@ module.exports = (function( root, factory ) {
              * @type {string}
              */
             this.name = source.name || 'Untitled';
+    
+            /**
+             * 单次文件夹上传时候的唯一标志
+             * @property directoryId
+             * @type {string}
+             */
+            this.directoryId = source.directoryId;
+    
+            /**
+             * 如果存在 directoryId 时，对应的文件的相对地址
+             * @property filePath
+             * @type {string}
+             */
+            this.filePath = source.filePath;
     
             /**
              * 文件体积（字节）
@@ -4690,7 +4706,7 @@ module.exports = (function( root, factory ) {
                 me.dndOver = false;
                 me.elem.removeClass( prefix + 'over' );
     
-                if ( data ) {
+                if ( data || !dataTransfer ) {
                     return;
                 }
     
@@ -4721,7 +4737,7 @@ module.exports = (function( root, factory ) {
                     if ( canAccessFolder && item.webkitGetAsEntry().isDirectory ) {
     
                         promises.push( this._traverseDirectoryTree(
-                                item.webkitGetAsEntry(), results ) );
+                                item.webkitGetAsEntry(), results, null, Base.guid() ) );
                     } else {
                         results.push( file );
                     }
@@ -4737,12 +4753,16 @@ module.exports = (function( root, factory ) {
                 });
             },
     
-            _traverseDirectoryTree: function( entry, results ) {
+            _traverseDirectoryTree: function( entry, results, directory, uid ) {
                 var deferred = Base.Deferred(),
                     me = this;
     
                 if ( entry.isFile ) {
                     entry.file(function( file ) {
+                        if (directory) {
+                          file.directoryId = uid
+                          file.filePath = directory.fullPath.substr(1) + '/' + file.name
+                        }
                         results.push( file );
                         deferred.resolve();
                     });
@@ -4755,7 +4775,7 @@ module.exports = (function( root, factory ) {
     
                         for ( i = 0; i < len; i++ ) {
                             promises.push( me._traverseDirectoryTree(
-                                    entries[ i ], arr ) );
+                                    entries[ i ], arr, entry, uid) );
                         }
     
                         Base.when.apply( Base, promises ).then(function() {
@@ -5058,6 +5078,7 @@ module.exports = (function( root, factory ) {
             }
         };
     });
+    
     /**
      * Terms:
      *

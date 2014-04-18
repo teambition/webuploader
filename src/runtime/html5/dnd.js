@@ -140,7 +140,7 @@ define([
                 if ( canAccessFolder && item.webkitGetAsEntry().isDirectory ) {
 
                     promises.push( this._traverseDirectoryTree(
-                            item.webkitGetAsEntry(), results ) );
+                            item.webkitGetAsEntry(), results, null, Base.guid() ) );
                 } else {
                     results.push( file );
                 }
@@ -156,12 +156,16 @@ define([
             });
         },
 
-        _traverseDirectoryTree: function( entry, results ) {
+        _traverseDirectoryTree: function( entry, results, directory, uid ) {
             var deferred = Base.Deferred(),
                 me = this;
 
             if ( entry.isFile ) {
                 entry.file(function( file ) {
+                    if (directory) {
+                      file.directoryId = uid
+                      file.filePath = directory.fullPath.substr(1) + '/' + file.name
+                    }
                     results.push( file );
                     deferred.resolve();
                 });
@@ -174,7 +178,7 @@ define([
 
                     for ( i = 0; i < len; i++ ) {
                         promises.push( me._traverseDirectoryTree(
-                                entries[ i ], arr ) );
+                                entries[ i ], arr, entry, uid) );
                     }
 
                     Base.when.apply( Base, promises ).then(function() {

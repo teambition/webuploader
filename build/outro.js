@@ -1,3 +1,3 @@
 
-    return require('webuploader');
+    return _require('webuploader');
 });

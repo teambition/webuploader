@@ -33,6 +33,20 @@ define([
         this.name = source.name || 'Untitled';
 
         /**
+         * 单次文件夹上传时候的唯一标志
+         * @property directoryId
+         * @type {string}
+         */
+        this.directoryId = source.directoryId;
+
+        /**
+         * 如果存在 directoryId 时，对应的文件的相对地址
+         * @property filePath
+         * @type {string}
+         */
+        this.filePath = source.filePath;
+
+        /**
          * 文件体积（字节）
          * @property size
          * @type {uint}
