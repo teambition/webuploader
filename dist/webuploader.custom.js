@@ -123,7 +123,6 @@
     }
 })( this, function( window, define, require ) {
 
-
     /**
      * @fileOverview jQuery or Zepto
      */
@@ -3808,6 +3807,7 @@
             }
         };
     });
+    
     /**
      * Terms:
      *
@@ -5615,5 +5615,6 @@
     ], function( Base ) {
         return Base;
     });
+
     return require('webuploader');
 });
