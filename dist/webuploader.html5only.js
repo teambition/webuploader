@@ -4581,6 +4581,9 @@
                 } catch( err ) {
                 }
     
+                me.dndOver = false;
+                me.elem.removeClass( prefix + 'over' );
+    
                 if ( data ) {
                     return;
                 }
@@ -4591,8 +4594,6 @@
                     }) );
                 });
     
-                me.dndOver = false;
-                me.elem.removeClass( prefix + 'over' );
                 return false;
             },
     
@@ -4668,7 +4669,7 @@
                 if (!elem) {
                     return;
                 }
-                
+    
                 elem.off( 'dragenter', this.dragEnterHandler );
                 elem.off( 'dragover', this.dragOverHandler );
                 elem.off( 'dragleave', this.dragLeaveHandler );
