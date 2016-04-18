@@ -2,6 +2,7 @@
 .idea
 /pages
 /node_modules
+/bower_components
 /doc
 server/*
 !server/preview.php
