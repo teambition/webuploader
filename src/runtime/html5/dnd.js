@@ -137,9 +137,9 @@ define([
                 file = files[ i ];
                 item = items && items[ i ];
 				
-				if (item.kind != 'file') {
-					continue;
-				}
+                if (item.kind != 'file') {
+                    continue;
+                }
 				
                 if ( canAccessFolder && item.webkitGetAsEntry().isDirectory ) {
 
