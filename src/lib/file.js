@@ -14,6 +14,8 @@ define([
     function File( ruid, file ) {
         var ext;
 
+        this.directoryId = file.directoryId
+        this.filePath = file.filePath
         this.name = file.name || ('untitled' + uid++);
         ext = rExt.exec( file.name ) ? RegExp.$1.toLowerCase() : '';
 

@@ -1518,6 +1518,8 @@
         function File( ruid, file ) {
             var ext;
     
+            this.directoryId = file.directoryId
+            this.filePath = file.filePath
             this.name = file.name || ('untitled' + uid++);
             ext = rExt.exec( file.name ) ? RegExp.$1.toLowerCase() : '';
     
@@ -2499,6 +2501,20 @@
              * @type {string}
              */
             this.name = source.name || 'Untitled';
+    
+            /**
+             * 单次文件夹上传时候的唯一标志
+             * @property directoryId
+             * @type {string}
+             */
+            this.directoryId = source.directoryId;
+    
+            /**
+             * 如果存在 directoryId 时，对应的文件的相对地址
+             * @property filePath
+             * @type {string}
+             */
+            this.filePath = source.filePath;
     
             /**
              * 文件体积（字节）
