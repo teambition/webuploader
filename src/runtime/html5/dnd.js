@@ -136,7 +136,11 @@ define([
             for ( i = 0, len = files.length; i < len; i++ ) {
                 file = files[ i ];
                 item = items && items[ i ];
-
+				
+                if (item.kind != 'file') {
+                    continue;
+                }
+				
                 if ( canAccessFolder && item.webkitGetAsEntry().isDirectory ) {
 
                     promises.push( this._traverseDirectoryTree(
